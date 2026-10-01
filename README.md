@@ -8,9 +8,9 @@
 
 ## 界面预览
 
-![JSONL Viewer 的逐行预览、搜索和 JSON 树界面演示](store/screenshots/jsonl-viewer-demo-1280x800.png)
+![JSONL Viewer 的逐行预览、搜索和 JSON 树界面](store/screenshots/jsonl-viewer-1280x800.png)
 
-演示图基于扩展界面，记录内容已替换为示例数据。
+截图来自实际安装的扩展，展示逐行预览与 JSON 树。
 
 ## 特性
 
@@ -51,7 +51,7 @@
 
 仓库中已提交可安装的 [v1.0.0 ZIP](dist/jsonl-preview-v1.0.0.zip)。运行 `npm run package:extension` 可重新生成 ZIP；`npm run check:package` 会核对仓库中的 ZIP 与当前扩展源码是否一致。ZIP 只包含运行所需文件；不要把整个 Git 仓库或 `node_modules` 上传到 Chrome Web Store。Chrome Manifest 的本地化文件可用 `python3 scripts/generate-manifest-locales.py` 重新生成。图标和商店宣传图的源脚本为 `scripts/generate-assets.py`（重新生成需要 Pillow）。
 
-1.0.0 版本已提交 Chrome Web Store 审核；审核结果与实际上架时间以商店后台为准。README 中的演示图为 1280×800，数据已替换为示例；商店提交应使用从真实安装的扩展拍摄且已脱敏的截图。开发者账户注册、上传 ZIP、填写商店资料与隐私实践、选择发布范围、提交审核的步骤见 [Chrome Web Store 提交指南](STORE_LISTING.md)。
+1.0.0 版本已提交 Chrome Web Store 审核；审核结果与实际上架时间以商店后台为准。README 中的真实界面截图为 1280×800。开发者账户注册、上传 ZIP、填写商店资料与隐私实践、选择发布范围、提交审核的步骤见 [Chrome Web Store 提交指南](STORE_LISTING.md)。
 
 ## 开源
 
