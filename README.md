@@ -12,9 +12,13 @@
 
 ## 安装与使用
 
-1. 打开 `chrome://extensions`，开启「开发者模式」，点击「加载已解压的扩展程序」，选择本目录。
-2. 点击扩展图标，在新标签页粘贴内容并按 `⌘/Ctrl + Enter`，或点击「打开文件」。也可以把文件拖到页面任意位置，看到放置提示后松开。
-3. 左侧默认按行显示各自的字段摘要，适合字段不固定的 JSONL；需要跨行对比时可切换到「公共字段表」。搜索框可选择字段名（默认，包含嵌套键）、字段值或原始行；异常行始终按原文搜索。点击记录，在右侧展开 JSON 树、复制原始 JSON 或字段路径。长字符串可点「阅读全文」，在宽幅阅读视图中按原始换行查看和复制。
+当前版本尚未上架 Chrome Web Store。可先手动安装：
+
+1. [下载扩展 ZIP](dist/jsonl-preview-v0.1.0.zip)，解压到一个固定的文件夹。确认该文件夹**根目录**能看到 `manifest.json`；不要在 Chrome 中选择 ZIP 文件本身。
+2. 在 Chrome 地址栏打开 `chrome://extensions`，开启右上角的「开发者模式」，点击「加载已解压的扩展程序」，选择刚才解压出的文件夹。安装后可在扩展菜单中将图标固定到工具栏。
+3. 点击扩展图标打开预览页。粘贴 JSONL 后按 `⌘/Ctrl + Enter`，或选择、拖入文件；点击记录即可查看右侧 JSON 树。更新手动安装的版本时，下载并解压新版文件，然后在 `chrome://extensions` 点击该扩展的「重新加载」。
+
+开发者也可以克隆本仓库，在第 2 步直接选择包含 `manifest.json` 的项目目录。扩展的搜索可选择字段名（包含嵌套键）、字段值或原始行；异常行始终按原文搜索。长字符串可点「阅读全文」，按原始换行查看和复制。
 
 也可以直接用 `file://` 打开 `viewer.html` 试用：此时解析器在页面中分批运行，较大的文件可能短暂影响交互。通过扩展图标打开时仍使用独立 Worker。扩展本身不需要服务器、权限或联网。`vendor/fzstd.js` 是随扩展打包的 [fzstd 0.1.1](https://github.com/101arrowz/fzstd)，MIT 许可证见 `vendor/fzstd.LICENSE`。
 
@@ -33,9 +37,9 @@
 
 ## 发布
 
-运行 `npm run package:extension` 会验证 Manifest、图标、运行文件与权限声明，并生成 `dist/jsonl-preview-v0.1.0.zip`。ZIP 只包含扩展运行所需的文件；不用把整个 Git 仓库或 `node_modules` 上传到 Chrome Web Store。图标和商店宣传图的源脚本为 `scripts/generate-assets.py`（重新生成需要 Pillow）。
+仓库中已提交可安装的 [v0.1.0 ZIP](dist/jsonl-preview-v0.1.0.zip)。运行 `npm run package:extension` 可重新生成 ZIP；`npm run check:package` 会核对仓库中的 ZIP 与当前扩展源码是否一致。ZIP 只包含运行所需文件；不要把整个 Git 仓库或 `node_modules` 上传到 Chrome Web Store。图标和商店宣传图的源脚本为 `scripts/generate-assets.py`（重新生成需要 Pillow）。
 
-提交商店前还需从**真实安装的扩展**拍摄至少一张 1280×800 或 640×400 的界面截图，并在开发者后台填写商店文案、隐私实践、支持地址和 [隐私说明](PRIVACY.md) URL。文案与检查项见 [STORE_LISTING.md](STORE_LISTING.md)。开发者账户注册、截图审阅与最终发布需仓库所有者在 Chrome Web Store 后台完成。首次正式发布建议先用 private/trusted testers 做一次完整试用。
+提交商店前还需从**真实安装的扩展**拍摄至少一张 1280×800 或 640×400 的界面截图。开发者账户注册、上传 ZIP、填写商店资料与隐私实践、选择发布范围、提交审核的步骤见 [Chrome Web Store 提交指南](STORE_LISTING.md)。
 
 ## 开源
 
