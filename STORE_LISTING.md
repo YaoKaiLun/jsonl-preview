@@ -6,7 +6,7 @@
 
 1. 登录 [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole)。首次发布需要注册开发者账户、支付一次性注册费用，并验证联系邮箱。
 2. 在本地正式安装态验收扩展；从**真实扩展界面**拍摄至少一张脱敏截图，尺寸为 1280×800 或 640×400 像素。本仓库已有 128 px 图标和 440×280 像素宣传图，见下方素材清单。
-3. 首次上传时在后台点击 **Add new item**，选择仓库中的 [`dist/jsonl-preview-v0.2.0.zip`](dist/jsonl-preview-v0.2.0.zip)。如果已上传 v0.1.0 草稿，在该项目的 **Package** 页选择 **Upload New Package**，上传 v0.2.0；不用新建第二个项目。不要上传源代码仓库的整体 ZIP。后续更新需增加 `manifest.json` 中的版本号并重新打包。
+3. 首次上传时在后台点击 **Add new item**，选择仓库中的 [`dist/jsonl-preview-v1.0.0.zip`](dist/jsonl-preview-v1.0.0.zip)。如果已上传旧版草稿，在该项目的 **Package** 页选择 **Upload New Package**，上传 v1.0.0；不用新建第二个项目。不要上传源代码仓库的整体 ZIP。后续更新需增加 `manifest.json` 中的版本号并重新打包。
 4. 填写 **Store Listing**（描述、类别、截图、宣传图、支持链接）、**Privacy**（单一用途、权限与数据处理声明）及 **Distribution**（公开、非公开链接或仅限测试者，以及发布地区）。下面的文案和隐私信息可直接作为起点，但提交前要与实际行为逐项核对。
 5. 点击 **Submit for Review**。可以选择审核通过后自动发布，或暂缓发布并在审核通过后手动发布。遇到审核反馈时按后台提示修正，再上传新版包。
 
@@ -37,7 +37,7 @@
 
 - [x] 扩展图标 16/48/128 px：`icons/`
 - [x] 小型宣传图 440×280 px：`store/promo-440x280.png`
-- [x] 可上传的扩展包：`dist/jsonl-preview-v0.2.0.zip`
+- [x] 可上传的扩展包：`dist/jsonl-preview-v1.0.0.zip`
 - [ ] 真实扩展截图至少 1 张，1280×800 或 640×400 px；使用脱敏示例，不展示私人日志。
 - [ ] 在 Chrome Web Store 注册/验证开发者账户，填写列表、隐私实践和支持链接。
 - [ ] 将仓库内的扩展 ZIP 上传后台；确认审核反馈。

@@ -1,6 +1,6 @@
 # Chrome Web Store form copy (English)
 
-This is copy for the v0.2.0 package. Check each field against the actual dashboard form and extension before submission. The extension name is JSONL Viewer, and the interface follows the browser language in nine supported locales.
+This is copy for the v1.0.0 package. Check each field against the actual dashboard form and extension before submission. The extension name is JSONL Viewer, and the interface follows the browser language in nine supported locales.
 
 Optional detailed descriptions for the other eight locales are in [STORE_LISTING_TRANSLATIONS.md](STORE_LISTING_TRANSLATIONS.md); Chrome Web Store descriptions must be entered separately for each locale in the dashboard.
 
