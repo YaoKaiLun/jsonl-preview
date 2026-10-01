@@ -1,4 +1,10 @@
 const $ = (id) => document.getElementById(id);
+const { t, number, locale } = window.appI18n;
+document.documentElement.lang = locale.replace('_', '-');
+document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
+document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+document.querySelectorAll('[data-i18n-aria-label]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAriaLabel)); });
 const ROW_HEIGHT = 42;
 const OVERSCAN = 8;
 const FIRST_COLUMN_WIDTH = 70;
@@ -23,15 +29,16 @@ function setStatus(message, kind = '') {
 }
 function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KiB`;
-  return `${(bytes / 1024 ** 2).toFixed(1)} MiB`;
+  const decimal = value => new Intl.NumberFormat(locale.replace('_', '-'), { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(value);
+  if (bytes < 1024 ** 2) return `${decimal(bytes / 1024)} KiB`;
+  return `${decimal(bytes / 1024 ** 2)} MiB`;
 }
 function createLocalParser() {
   let stopped = false;
   const parser = { onmessage: null, onerror: null, terminate() { stopped = true; } };
   const engine = window.createJsonlEngine(
     data => { if (!stopped) queueMicrotask(() => { if (!stopped) parser.onmessage?.({ data }); }); },
-    () => { if (!window.fzstd) throw new Error('本地 zstd 解压器未加载'); },
+    () => { if (!window.fzstd) throw new Error(t('parserMissingZstd')); },
     () => stopped
   );
   parser.postMessage = data => {
@@ -43,12 +50,12 @@ function activateWorker() {
   worker?.terminate();
   try { worker = location.protocol === 'file:' ? createLocalParser() : new Worker('worker.js'); }
   catch (error) {
-    setStatus(`无法启动解析器：${error.message}`, 'error');
+    setStatus(t('parserUnavailable', { error: error.message }), 'error');
     return false;
   }
-  worker.onerror = () => setStatus('解析器启动失败，请刷新页面重试', 'error');
+  worker.onerror = () => setStatus(t('parserStartFail'), 'error');
   worker.onmessage = ({ data }) => {
-    if (data.type === 'progress') setStatus(`读取 ${formatBytes(data.readBytes)} / ${formatBytes(data.fileBytes)} · 已解析 ${data.records.toLocaleString()} 行`);
+    if (data.type === 'progress') setStatus(t('progress', { read: formatBytes(data.readBytes), total: formatBytes(data.fileBytes), records: number(data.records) }));
     if (data.type === 'failure') setStatus(data.message, 'error');
     if (data.type === 'ready') onReady(data);
     if (data.type === 'query' && data.requestId === requestId) onQuery(data);
@@ -59,14 +66,14 @@ function activateWorker() {
 }
 function loadPaste() {
   const value = $('pasteInput').value;
-  if (!value.trim()) return setStatus('请先粘贴 JSONL 内容', 'error');
-  resetView('粘贴内容');
+  if (!value.trim()) return setStatus(t('pasteFirst'), 'error');
+  resetView(t('pastedContent'));
   if (!activateWorker()) return;
   worker.postMessage({ type: 'paste', value });
 }
 function loadFile(file) {
   if (!file) return;
-  if (!/\.(jsonl|ndjson|jsonl\.zstd|jsonl\.zst|zstd|zst)$/i.test(file.name)) return setStatus('请选择 .jsonl、.ndjson 或 .jsonl.zstd 文件', 'error');
+  if (!/\.(jsonl|ndjson|jsonl\.zstd|jsonl\.zst|zstd|zst)$/i.test(file.name)) return setStatus(t('chooseFileError'), 'error');
   resetView(file.name);
   if (!activateWorker()) return;
   worker.postMessage({ type: 'file', file });
@@ -74,7 +81,7 @@ function loadFile(file) {
 function resetView(name) {
   $('workspace').hidden = true;
   $('sourceBadge').textContent = name;
-  setStatus('正在解析…');
+  setStatus(t('parsing'));
   $('searchInput').value = '';
   $('searchScope').value = 'keys';
   $('searchScope').disabled = false;
@@ -90,12 +97,12 @@ function onReady(data) {
   columns = data.fields;
   if (!columns.length) columns = ['$value'];
   $('workspace').hidden = false;
-  $('recordCount').textContent = data.records.toLocaleString();
-  $('errorCount').textContent = data.errors.toLocaleString();
-  $('errorTabCount').textContent = data.errors.toLocaleString();
-  $('fieldCount').textContent = data.fieldCount.toLocaleString();
+  $('recordCount').textContent = number(data.records);
+  $('errorCount').textContent = number(data.errors);
+  $('errorTabCount').textContent = number(data.errors);
+  $('fieldCount').textContent = number(data.fieldCount);
   $('sourceName').textContent = data.sourceName;
-  setStatus(`完成 · ${formatBytes(data.decodedBytes)} · ${data.records.toLocaleString()} 条有效记录${data.errors ? ` · ${data.errors} 条异常` : ''}`, data.errors ? 'warning' : 'success');
+  setStatus(t('complete', { size: formatBytes(data.decodedBytes), records: number(data.records), errors: data.errors ? t('errorCountSuffix', { count: number(data.errors) }) : '' }), data.errors ? 'warning' : 'success');
   setMode('records');
 }
 function setMode(mode) {
@@ -116,7 +123,7 @@ function setMode(mode) {
   $('tableTab').classList.toggle('active', mode === 'table');
   $('errorsTab').classList.toggle('active', mode === 'errors');
   $('tableHeader').replaceChildren();
-  const labels = mode === 'records' ? ['行号', '概览', '本行字段摘要'] : mode === 'errors' ? ['行号', '错误', '原始行'] : ['行号', ...columns];
+  const labels = mode === 'records' ? [t('columnLine'), t('columnOverview'), t('columnSummary')] : mode === 'errors' ? [t('columnLine'), t('columnError'), t('columnRaw')] : [t('columnLine'), ...columns];
   $('tableHeader').style.setProperty('--cols', `${labels.length - 1}`);
   $('tableHeader').classList.toggle('record-layout', mode === 'records');
   $('tableHeader').classList.toggle('error-layout', mode === 'errors');
@@ -140,12 +147,12 @@ function query() {
   detailRequestId++;
   selected = -1;
   clearDetail();
-  $('matchCount').textContent = $('searchInput').value.trim() ? '搜索中…' : '';
+  $('matchCount').textContent = $('searchInput').value.trim() ? t('statusSearching') : '';
   worker.postMessage({ type: 'query', errors: viewMode === 'errors', scope: $('searchScope').value, search: $('searchInput').value, requestId: ++requestId });
 }
 function onQuery(data) {
   count = data.count;
-  $('matchCount').textContent = $('searchInput').value.trim() ? `${count.toLocaleString()} 条` : '';
+  $('matchCount').textContent = $('searchInput').value.trim() ? t('resultCount', { count: number(count) }) : '';
   $('tableSpacer').style.height = `${count * ROW_HEIGHT}px`;
   $('tableRows').replaceChildren();
   $('emptyState').hidden = count !== 0;
@@ -154,9 +161,9 @@ function onQuery(data) {
   requestRows(true);
 }
 function updateSearchPlaceholder() {
-  $('searchInput').placeholder = viewMode === 'errors' ? '搜索异常行原文…' : {
-    keys: '搜索字段名（含嵌套字段）…', values: '搜索字段值…', raw: '搜索原始行内容…'
-  }[$('searchScope').value];
+  $('searchInput').placeholder = t(viewMode === 'errors' ? 'searchErrorRaw' : {
+    keys: 'searchKeys', values: 'searchValues', raw: 'searchRaw'
+  }[$('searchScope').value]);
 }
 function syncTableWidth() {
   const minWidth = viewMode === 'records' ? 720 : viewMode === 'errors' ? 690 : FIRST_COLUMN_WIDTH + columns.length * DATA_COLUMN_MIN_WIDTH;
@@ -203,15 +210,15 @@ function selectRow(index) {
 }
 function clearDetail() {
   currentDetail = null;
-  $('detailTitle').textContent = '选择一行查看结构';
-  $('detailMeta').textContent = '点击左侧记录，查看折叠树、原始文本与路径。';
+  $('detailTitle').textContent = t('selectRowTitle');
+  $('detailMeta').textContent = t('selectRowHelp');
   $('detailBody').replaceChildren();
   $('copyRow').disabled = true;
 }
 function renderDetail(data) {
   currentDetail = data;
-  $('detailTitle').textContent = `第 ${data.line} 行`;
-  $('detailMeta').textContent = data.error ? `解析失败 · ${data.error}` : `有效 JSON · ${formatBytes(new TextEncoder().encode(data.raw).length)}`;
+  $('detailTitle').textContent = t('detailLine', { line: number(data.line) });
+  $('detailMeta').textContent = data.error ? t('parseFailed', { error: data.error }) : t('validJson', { size: formatBytes(new TextEncoder().encode(data.raw).length) });
   $('copyRow').disabled = false;
   $('detailBody').replaceChildren();
   if (data.error) {
@@ -257,14 +264,14 @@ function renderNode(value, name, path, depth) {
     row.append(val);
     if (longText) {
       const readButton = document.createElement('button');
-      readButton.className = 'read-text-button'; readButton.type = 'button'; readButton.textContent = '阅读全文';
+      readButton.className = 'read-text-button'; readButton.type = 'button'; readButton.textContent = t('readFullText');
       readButton.addEventListener('click', () => openTextReader(value, path));
       row.append(readButton);
     }
     root.append(row);
   }
-  const pathButton = document.createElement('button'); pathButton.className = 'path-button'; pathButton.type = 'button'; pathButton.title = `复制路径 ${path}`; pathButton.textContent = '复制路径';
-  pathButton.addEventListener('click', () => copyText(path, '路径已复制'));
+  const pathButton = document.createElement('button'); pathButton.className = 'path-button'; pathButton.type = 'button'; pathButton.title = `${t('copyPath')} ${path}`; pathButton.textContent = t('copyPath');
+  pathButton.addEventListener('click', () => copyText(path, t('pathCopied')));
   row.append(pathButton);
   return root;
 }
@@ -272,14 +279,14 @@ function childPath(path, key, array) {
   return array ? `${path}[${key}]` : /^[A-Za-z_$][\w$]*$/.test(key) ? `${path}.${key}` : `${path}[${JSON.stringify(key)}]`;
 }
 function openTextReader(value, path) {
-  $('readerTitle').textContent = `第 ${currentDetail.line} 行 · 长文本`;
-  $('readerPath').textContent = `${path} · ${value.length.toLocaleString()} 字符`;
+  $('readerTitle').textContent = `${t('detailLine', { line: number(currentDetail.line) })} · ${t('longText')}`;
+  $('readerPath').textContent = `${path} · ${t('chars', { count: number(value.length) })}`;
   $('readerContent').textContent = value;
   $('textReader').showModal();
 }
 async function copyText(value, message) {
   try { await navigator.clipboard.writeText(value); setStatus(message, 'success'); return true; }
-  catch { setStatus('复制失败，请检查剪贴板权限', 'error'); return false; }
+  catch { setStatus(t('copyFailed'), 'error'); return false; }
 }
 
 $('openBtn').addEventListener('click', () => $('fileInput').click());
@@ -308,11 +315,11 @@ $('tableScroll').addEventListener('scroll', () => {
   requestRows();
 });
 new ResizeObserver(syncTableWidth).observe($('tableScroll'));
-$('copyRow').addEventListener('click', () => currentDetail && copyText(currentDetail.raw, 'JSON 已复制'));
+$('copyRow').addEventListener('click', () => currentDetail && copyText(currentDetail.raw, t('jsonCopied')));
 $('readerCopy').addEventListener('click', async () => {
-  if (await copyText($('readerContent').textContent, '全文已复制')) {
-    $('readerCopy').textContent = '已复制';
-    setTimeout(() => { $('readerCopy').textContent = '复制全文'; }, 1600);
+  if (await copyText($('readerContent').textContent, t('fullCopied'))) {
+    $('readerCopy').textContent = t('copied');
+    setTimeout(() => { $('readerCopy').textContent = t('copyFullText'); }, 1600);
   }
 });
 $('readerClose').addEventListener('click', () => $('textReader').close());
@@ -348,7 +355,7 @@ document.addEventListener('drop', event => {
   event.preventDefault();
   hideDropOverlay();
   const files = event.dataTransfer.files;
-  if (files.length > 1) return setStatus('请一次拖入一个文件', 'error');
+  if (files.length > 1) return setStatus(t('chooseOneFile'), 'error');
   loadFile(files[0]);
 });
 window.addEventListener('blur', hideDropOverlay);

@@ -1,35 +1,36 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>JSONL 预览器</title>
+  <title>JSONL Viewer</title>
   <link rel="stylesheet" href="viewer.css">
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="brand-icon">{ }</span><span>JSONL 预览器</span><span class="tag">本地预览</span></div>
-    <div class="header-actions"><button id="demoBtn" class="subtle">试用示例</button><button id="openBtn" class="primary">打开文件</button><input id="fileInput" type="file" accept=".jsonl,.ndjson,.jsonl.zstd,.jsonl.zst,.zstd,.zst" hidden></div>
+    <div class="brand"><span class="brand-icon">{ }</span><span>JSONL Viewer</span><span class="tag" data-i18n="localPreview">Local preview</span></div>
+    <div class="header-actions"><button id="demoBtn" class="subtle" data-i18n="trySample">Try sample</button><button id="openBtn" class="primary" data-i18n="openFile">Open file</button><input id="fileInput" type="file" accept=".jsonl,.ndjson,.jsonl.zstd,.jsonl.zst,.zstd,.zst" hidden></div>
   </header>
   <main>
     <section class="source-panel">
-      <div class="section-head"><div><div class="eyebrow">SOURCE</div><h1>看清每一行数据</h1><p>粘贴 JSONL，或拖入 .jsonl / .jsonl.zstd 文件。所有处理都在当前浏览器中完成。</p></div><div id="sourceBadge" class="source-badge">等待输入</div></div>
-      <div class="paste-wrap" id="dropZone"><textarea id="pasteInput" spellcheck="false" placeholder='{"id": 1, "event": "start", "payload": {"ok": true}}&#10;{"id": 2, "event": "finish", "payload": {"ok": false}}'></textarea><div class="paste-foot"><span id="dropHint">可直接把文件拖到这里</span><button id="parseBtn" class="primary">解析粘贴内容 <span>⌘ ↵</span></button></div></div>
-      <div id="status" class="status" role="status" aria-live="polite">准备就绪</div>
+      <div class="section-head"><div><div class="eyebrow" data-i18n="sourceSection">SOURCE</div><h1 data-i18n="heroTitle">Explore every line</h1><p data-i18n="heroDesc">Paste JSONL or drop a .jsonl / .jsonl.zstd file. All processing stays in your browser.</p></div><div id="sourceBadge" class="source-badge" data-i18n="waitingInput">Waiting for input</div></div>
+      <div class="paste-wrap" id="dropZone"><textarea id="pasteInput" spellcheck="false" placeholder='{"id": 1, "event": "start", "payload": {"ok": true}}&#10;{"id": 2, "event": "finish", "payload": {"ok": false}}'></textarea><div class="paste-foot"><span id="dropHint" data-i18n="dropHint">You can drop a file here</span><button id="parseBtn" class="primary"><span data-i18n="parsePaste">Parse pasted content</span> <span>⌘/Ctrl ↵</span></button></div></div>
+      <div id="status" class="status" role="status" aria-live="polite" data-i18n="ready">Ready</div>
     </section>
     <section class="workspace" id="workspace" hidden>
-      <div class="summary"><div class="metric"><span>记录</span><strong id="recordCount">0</strong></div><div class="metric"><span>异常行</span><strong id="errorCount">0</strong></div><div class="metric"><span>字段</span><strong id="fieldCount">0</strong></div><div class="metric"><span>来源</span><strong id="sourceName">粘贴内容</strong></div></div>
-      <div class="work-toolbar"><div class="view-switch"><button id="recordsTab" class="active">逐行预览</button><button id="tableTab" title="比较前 1000 条记录中最常见的字段">公共字段表</button><button id="errorsTab">异常行 <span id="errorTabCount">0</span></button></div><div class="search-tools"><select id="searchScope" aria-label="搜索范围"><option value="keys">字段名</option><option value="values">字段值</option><option value="raw">原始行</option></select><div class="filters"><input id="searchInput" type="search" placeholder="搜索字段名…" aria-label="搜索内容"><button id="clearSearch" title="清除搜索">×</button></div><span id="matchCount" class="match-count" aria-live="polite"></span></div></div>
-      <div class="data-layout"><div class="table-panel"><div id="tableHeader" class="table-header"></div><div id="tableScroll" class="table-scroll"><div id="tableSpacer"><div id="tableRows"></div></div></div><div id="emptyState" class="empty-state" hidden>没有匹配的记录</div></div><aside class="detail-panel"><div class="detail-head"><div><div class="eyebrow">INSPECTOR</div><h2 id="detailTitle">选择一行查看结构</h2></div><button id="copyRow" class="subtle" disabled>复制 JSON</button></div><div id="detailMeta" class="detail-meta">点击左侧记录，查看折叠树、原始文本与路径。</div><div id="detailBody" class="detail-body"></div></aside></div>
+      <div class="summary"><div class="metric"><span data-i18n="recordsMetric">Records</span><strong id="recordCount">0</strong></div><div class="metric"><span data-i18n="errorsMetric">Invalid lines</span><strong id="errorCount">0</strong></div><div class="metric"><span data-i18n="fieldsMetric">Fields</span><strong id="fieldCount">0</strong></div><div class="metric"><span data-i18n="sourceMetric">Source</span><strong id="sourceName" data-i18n="pastedContent">Pasted content</strong></div></div>
+      <div class="work-toolbar"><div class="view-switch"><button id="recordsTab" class="active" data-i18n="rowsTab">Row preview</button><button id="tableTab" data-i18n="commonFieldsTab" data-i18n-title="commonFieldsTitle">Common fields</button><button id="errorsTab"><span data-i18n="errorsTab">Invalid lines</span> <span id="errorTabCount">0</span></button></div><div class="search-tools"><select id="searchScope" data-i18n-aria-label="searchScope"><option value="keys" data-i18n="keys">Field names</option><option value="values" data-i18n="values">Field values</option><option value="raw" data-i18n="rawLine">Raw lines</option></select><div class="filters"><input id="searchInput" type="search" data-i18n-placeholder="searchKeys" data-i18n-aria-label="searchInput"><button id="clearSearch" data-i18n-title="clearSearch" data-i18n-aria-label="clearSearch">×</button></div><span id="matchCount" class="match-count" aria-live="polite"></span></div></div>
+      <div class="data-layout"><div class="table-panel"><div id="tableHeader" class="table-header"></div><div id="tableScroll" class="table-scroll"><div id="tableSpacer"><div id="tableRows"></div></div></div><div id="emptyState" class="empty-state" hidden data-i18n="emptyState">No matching records</div></div><aside class="detail-panel"><div class="detail-head"><div><div class="eyebrow" data-i18n="inspectorSection">INSPECTOR</div><h2 id="detailTitle" data-i18n="selectRowTitle">Select a row to inspect</h2></div><button id="copyRow" class="subtle" disabled data-i18n="copyJson">Copy JSON</button></div><div id="detailMeta" class="detail-meta" data-i18n="selectRowHelp">Click a record to inspect its tree, raw text, and paths.</div><div id="detailBody" class="detail-body"></div></aside></div>
     </section>
   </main>
   <div id="fileDropOverlay" class="file-drop-overlay" role="status" aria-live="polite" hidden>
-    <div class="file-drop-card"><span class="file-drop-icon">↓</span><strong>松开以打开 JSONL 文件</strong><span>支持 .jsonl、.ndjson、.jsonl.zstd</span></div>
+    <div class="file-drop-card"><span class="file-drop-icon">↓</span><strong data-i18n="dropTitle">Drop to open a JSONL file</strong><span data-i18n="dropFormats">Supports .jsonl, .ndjson, and .jsonl.zstd</span></div>
   </div>
   <dialog id="textReader" class="text-reader" aria-labelledby="readerTitle">
-    <div class="reader-head"><div><div class="eyebrow">TEXT READER</div><h2 id="readerTitle">阅读全文</h2><div id="readerPath" class="reader-path"></div></div><div class="reader-actions"><button id="readerCopy" class="subtle">复制全文</button><button id="readerClose" class="subtle" aria-label="关闭阅读视图">关闭</button></div></div>
+    <div class="reader-head"><div><div class="eyebrow" data-i18n="textReaderSection">TEXT READER</div><h2 id="readerTitle" data-i18n="readFullText">Read full text</h2><div id="readerPath" class="reader-path"></div></div><div class="reader-actions"><button id="readerCopy" class="subtle" data-i18n="copyFullText">Copy full text</button><button id="readerClose" class="subtle" data-i18n="close" data-i18n-aria-label="close">Close</button></div></div>
     <pre id="readerContent" class="reader-content"></pre>
   </dialog>
+  <script src="i18n.js"></script>
   <script src="vendor/fzstd.js"></script>
   <script src="worker.js"></script>
   <script src="viewer.js" type="module"></script>

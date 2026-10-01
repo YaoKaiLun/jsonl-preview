@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "JSONL Viewer"
+  },
+  "extDescription": {
+    "message": "Visualize JSONL e JSONL.ZSTD no navegador, pesquise registros e explore a árvore JSON."
+  },
+  "actionTitle": {
+    "message": "Abrir JSONL Viewer"
+  }
+}

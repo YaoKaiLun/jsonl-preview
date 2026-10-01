@@ -1,6 +1,8 @@
-# JSONL 预览器
+# JSONL Viewer
 
 一个无需构建步骤的开源 Chrome Manifest V3 扩展。点击工具栏图标打开独立预览页，支持粘贴 JSONL，或选择、拖入 `.jsonl`、`.ndjson`、`.jsonl.zstd`、`.jsonl.zst` 文件。文件始终留在浏览器本地。
+
+扩展会根据 Chrome 的界面语言自动切换文案，目前支持英语、简体中文、繁体中文、日语、韩语、西班牙语、法语、德语和巴西葡萄牙语；其他语言回退到英语。扩展名称统一显示为 **JSONL Viewer**。
 
 ## 特性
 
@@ -14,7 +16,7 @@
 
 当前版本尚未上架 Chrome Web Store。可先手动安装：
 
-1. [下载扩展 ZIP](dist/jsonl-preview-v0.1.0.zip)，解压到一个固定的文件夹。确认该文件夹**根目录**能看到 `manifest.json`；不要在 Chrome 中选择 ZIP 文件本身。
+1. [下载扩展 ZIP](dist/jsonl-preview-v0.2.0.zip)，解压到一个固定的文件夹。确认该文件夹**根目录**能看到 `manifest.json`；不要在 Chrome 中选择 ZIP 文件本身。
 2. 在 Chrome 地址栏打开 `chrome://extensions`，开启右上角的「开发者模式」，点击「加载已解压的扩展程序」，选择刚才解压出的文件夹。安装后可在扩展菜单中将图标固定到工具栏。
 3. 点击扩展图标打开预览页。粘贴 JSONL 后按 `⌘/Ctrl + Enter`，或选择、拖入文件；点击记录即可查看右侧 JSON 树。更新手动安装的版本时，下载并解压新版文件，然后在 `chrome://extensions` 点击该扩展的「重新加载」。
 
@@ -37,7 +39,7 @@
 
 ## 发布
 
-仓库中已提交可安装的 [v0.1.0 ZIP](dist/jsonl-preview-v0.1.0.zip)。运行 `npm run package:extension` 可重新生成 ZIP；`npm run check:package` 会核对仓库中的 ZIP 与当前扩展源码是否一致。ZIP 只包含运行所需文件；不要把整个 Git 仓库或 `node_modules` 上传到 Chrome Web Store。图标和商店宣传图的源脚本为 `scripts/generate-assets.py`（重新生成需要 Pillow）。
+仓库中已提交可安装的 [v0.2.0 ZIP](dist/jsonl-preview-v0.2.0.zip)。运行 `npm run package:extension` 可重新生成 ZIP；`npm run check:package` 会核对仓库中的 ZIP 与当前扩展源码是否一致。ZIP 只包含运行所需文件；不要把整个 Git 仓库或 `node_modules` 上传到 Chrome Web Store。Chrome Manifest 的本地化文件可用 `python3 scripts/generate-manifest-locales.py` 重新生成。图标和商店宣传图的源脚本为 `scripts/generate-assets.py`（重新生成需要 Pillow）。
 
 提交商店前还需从**真实安装的扩展**拍摄至少一张 1280×800 或 640×400 的界面截图。开发者账户注册、上传 ZIP、填写商店资料与隐私实践、选择发布范围、提交审核的步骤见 [Chrome Web Store 提交指南](STORE_LISTING.md)。
 

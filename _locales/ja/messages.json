@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "JSONL Viewer"
+  },
+  "extDescription": {
+    "message": "JSONL と JSONL.ZSTD をブラウザー内でプレビューし、検索と JSON ツリー表示を行います。"
+  },
+  "actionTitle": {
+    "message": "JSONL Viewer を開く"
+  }
+}

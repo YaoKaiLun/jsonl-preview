@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "JSONL 预览器",
-  "version": "0.1.0",
-  "description": "Preview JSONL and JSONL.ZSTD locally with a virtualized table and JSON tree.",
+  "name": "__MSG_extName__",
+  "version": "0.2.0",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
-  "action": { "default_title": "打开 JSONL 预览器", "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png" } },
+  "action": { "default_title": "__MSG_actionTitle__", "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png" } },
   "background": { "service_worker": "background.js" }
 }

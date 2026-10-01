@@ -151,3 +151,12 @@
   .search-tools .filters { width: 170px; }
   .match-count { display: none; }
 }
+
+/* Longer translated labels can wrap without pushing controls outside the panel. */
+.work-toolbar { height: auto; min-height: 54px; flex-wrap: wrap; gap: 8px; padding-top: 6px; padding-bottom: 6px; }
+.view-switch { height: auto; min-height: 40px; flex-wrap: wrap; }
+.view-switch button { padding: 7px 10px; }
+.search-tools { flex-wrap: wrap; }
+.search-tools select { width: auto; min-width: 92px; max-width: 170px; }
+.paste-foot { height: auto; min-height: 50px; gap: 8px; flex-wrap: wrap; padding-top: 7px; padding-bottom: 7px; }
+.source-panel p { line-height: 1.5; }

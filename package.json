@@ -1,12 +1,14 @@
 {
-  "name": "jsonl-preview",
+  "name": "jsonl-viewer",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "test": "node --test test/*.test.cjs",
     "check:release": "node scripts/check-release.cjs",
     "check:package": "python3 scripts/package-extension.py --check",
     "package:extension": "npm run check:release && python3 scripts/package-extension.py"
   },
-  "devDependencies": { "fzstd": "^0.1.1" }
+  "devDependencies": {
+    "fzstd": "^0.1.1"
+  }
 }

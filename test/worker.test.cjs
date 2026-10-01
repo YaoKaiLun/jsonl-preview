@@ -4,12 +4,16 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const zlib = require('node:zlib');
 
-function makeWorker() {
+function makeWorker(locale = 'zh-CN') {
   const messages = [];
-  const scope = { postMessage: message => messages.push(message), TextDecoder, TextEncoder, Uint8Array, setTimeout };
+  const scope = { postMessage: message => messages.push(message), TextDecoder, TextEncoder, Uint8Array, setTimeout, navigator: { language: locale } };
   scope.self = scope;
-  scope.importScripts = () => { scope.fzstd = require('fzstd'); };
   vm.createContext(scope);
+  scope.importScripts = file => {
+    if (file === 'i18n.js') vm.runInContext(fs.readFileSync('i18n.js', 'utf8'), scope);
+    else if (file === 'vendor/fzstd.js') scope.fzstd = require('fzstd');
+    else throw new Error(`Unexpected import: ${file}`);
+  };
   vm.runInContext(fs.readFileSync('worker.js', 'utf8'), scope);
   return { send: async data => { await scope.self.onmessage({ data }); return messages.at(-1); }, messages };
 }
@@ -57,8 +61,9 @@ test('decompresses a zstd JSONL stream before parsing', async () => {
 
 test('runs the same zstd parser when opened as a local HTML file', async () => {
   const messages = [];
-  const scope = { document: {}, fzstd: require('fzstd'), TextDecoder, TextEncoder, Uint8Array, setTimeout };
+  const scope = { document: {}, fzstd: require('fzstd'), TextDecoder, TextEncoder, Uint8Array, setTimeout, navigator: { language: 'zh-CN' } };
   vm.createContext(scope);
+  vm.runInContext(fs.readFileSync('i18n.js', 'utf8'), scope);
   vm.runInContext(fs.readFileSync('worker.js', 'utf8'), scope);
   const engine = scope.createJsonlEngine(message => messages.push(message), () => {});
   const raw = Buffer.from('{"source":"local","ok":true}\n');
@@ -97,6 +102,20 @@ test('record preview works without a type field and with non-object JSON values'
   const response = await worker.send({ type: 'rows', start: 0, count: 4, mode: 'records', requestId: 1 });
   assert.deepEqual(Array.from(response.rows, row => row.cells[0]), ['对象 · 2 字段', '数组 · 3 项', '字符串', 'null 值']);
   assert.match(response.rows[0].cells[1], /name: Ada/);
+});
+
+test('worker previews and parser errors follow the browser locale', async () => {
+  const worker = makeWorker('en-US');
+  await worker.send({ type: 'paste', value: '{"name":"Ada"}\n[1,2]\n' });
+  await worker.send({ type: 'query', search: '', requestId: 1 });
+  const rows = await worker.send({ type: 'rows', start: 0, count: 2, mode: 'records', requestId: 1 });
+  assert.equal(rows.rows[0].cells[0], 'Object · 1 fields');
+  assert.equal(rows.rows[1].cells[0], 'Array · 2 items');
+  const oversized = await worker.send({ type: 'paste', value: 'x'.repeat(4 * 1024 * 1024 + 1) });
+  assert.equal(oversized.type, 'ready');
+  await worker.send({ type: 'query', search: '', errors: true, requestId: 2 });
+  const detail = await worker.send({ type: 'detail', index: 0, requestId: 2 });
+  assert.match(detail.error, /4 million character/);
 });
 
 test('search distinguishes nested field names, values, and raw JSON', async () => {

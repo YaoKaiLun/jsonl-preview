@@ -1,6 +1,7 @@
 /* Shared parser: a Worker in the extension, or a local fallback for file:// previews. */
 ((root) => {
 function createJsonlEngine(emit, ensureZstd, isCancelled = () => false) {
+const t = root.appI18n.t;
 const MAX_DECODED_BYTES = 256 * 1024 * 1024;
 const MAX_RECORDS = 1_000_000;
 const MAX_LINE_CHARS = 4 * 1024 * 1024;
@@ -25,48 +26,48 @@ function reset(name) {
 function summarize(value) {
   if (value === undefined) return '—';
   if (value === null) return 'null';
-  if (Array.isArray(value)) return `Array(${value.length})`;
-  if (typeof value === 'object') return `Object(${Object.keys(value).length})`;
+  if (Array.isArray(value)) return t('labelArray', { count: value.length });
+  if (typeof value === 'object') return t('objectFields', { count: Object.keys(value).length });
   if (typeof value === 'string') return value;
   return String(value);
 }
 function recordPreview(value) {
   if (Array.isArray(value)) {
     const preview = value.slice(0, 3).map(summarize).join(' · ');
-    return [`数组 · ${value.length} 项`, `${preview || '空数组'}${value.length > 3 ? ` · +${value.length - 3} 项` : ''}`];
+    return [t('labelArray', { count: value.length }), `${preview || t('emptyArray')}${value.length > 3 ? t('moreItems', { count: value.length - 3 }) : ''}`];
   }
   if (value === null || typeof value !== 'object') {
-    const label = value === null ? 'null 值' : { string: '字符串', number: '数字', boolean: '布尔值' }[typeof value];
+    const label = value === null ? t('labelNull') : { string: t('labelString'), number: t('labelNumber'), boolean: t('labelBoolean') }[typeof value];
     return [label, summarize(value)];
   }
   const entries = Object.entries(value);
   const kindKey = ['type', 'event', 'kind', 'role'].find(key => typeof value[key] === 'string' || typeof value[key] === 'number');
-  const kind = kindKey ? `${kindKey}: ${value[kindKey]}` : `对象 · ${entries.length} 字段`;
+  const kind = kindKey ? `${kindKey}: ${value[kindKey]}` : t('objectFields', { count: entries.length });
   const others = entries.filter(([key]) => key !== kindKey);
   const summary = others.slice(0, 4).map(([key, item]) => {
     const text = summarize(item);
     return `${key}: ${text.length > 60 ? `${text.slice(0, 59)}…` : text}`;
   }).join(' · ');
-  return [kind, `${summary || '无其他字段'}${others.length > 4 ? ` · +${others.length - 4} 字段` : ''}`];
+  return [kind, `${summary || t('noOtherFields')}${others.length > 4 ? t('moreFields', { count: others.length - 4 }) : ''}`];
 }
 function consumeLine(raw) {
   lineNumber++;
   if (raw.endsWith('\r')) raw = raw.slice(0, -1);
   if (!raw.trim()) return;
   if (raw.length > MAX_LINE_CHARS) {
-    errors.push({ line: lineNumber, raw: raw.slice(0, 500), error: '单行超过 400 万字符的预览上限' });
+    errors.push({ line: lineNumber, raw: raw.slice(0, 500), error: t('limitLine') });
     return;
   }
   try {
     const value = JSON.parse(raw);
-    if (records.length >= MAX_RECORDS) throw new Error('记录数超过 100 万条上限');
+    if (records.length >= MAX_RECORDS) throw new Error(t('limitRecords'));
     records.push({ line: lineNumber, raw });
     if (records.length <= 1000) {
       const keys = value && typeof value === 'object' && !Array.isArray(value) ? Object.keys(value) : ['$value'];
       for (const key of keys) fields.set(key, (fields.get(key) || 0) + 1);
     }
   } catch (error) {
-    if (error.message === '记录数超过 100 万条上限') throw error;
+    if (error.message === t('limitRecords')) throw error;
     errors.push({ line: lineNumber, raw: raw.slice(0, 500), error: error.message });
   }
 }
@@ -85,7 +86,7 @@ function consumeText(text) {
     if (end === -1) break;
     if (oversizedLine) {
       lineNumber++;
-      errors.push({ line: lineNumber, raw: oversizedPreview, error: '单行超过 400 万字符的预览上限' });
+      errors.push({ line: lineNumber, raw: oversizedPreview, error: t('limitLine') });
       oversizedLine = false;
       oversizedPreview = '';
     } else consumeLine(carry);
@@ -96,7 +97,7 @@ function consumeText(text) {
 function finish() {
   if (oversizedLine) {
     lineNumber++;
-    errors.push({ line: lineNumber, raw: oversizedPreview, error: '单行超过 400 万字符的预览上限' });
+    errors.push({ line: lineNumber, raw: oversizedPreview, error: t('limitLine') });
   } else if (carry) consumeLine(carry);
   carry = '';
   oversizedLine = false;
@@ -113,7 +114,7 @@ async function loadFile(file) {
     ensureZstd();
     decompressor = new root.fzstd.Decompress((chunk) => {
       decodedBytes += chunk.byteLength;
-      if (decodedBytes > MAX_DECODED_BYTES) throw new Error('解压后超过 256 MiB 上限');
+      if (decodedBytes > MAX_DECODED_BYTES) throw new Error(t('limitDecompress'));
       consumeText(decoder.decode(chunk, { stream: true }));
     });
   }
@@ -128,7 +129,7 @@ async function loadFile(file) {
       if (isZstd) decompressor.push(value);
       else {
         decodedBytes += value.byteLength;
-        if (decodedBytes > MAX_DECODED_BYTES) throw new Error('文件超过 256 MiB 上限');
+        if (decodedBytes > MAX_DECODED_BYTES) throw new Error(t('limitFile'));
         consumeText(decoder.decode(value, { stream: true }));
       }
       if (readBytes === value.byteLength || readBytes % (4 * 1024 * 1024) < value.byteLength) {
@@ -142,9 +143,9 @@ async function loadFile(file) {
   } finally { reader.releaseLock(); }
 }
 function loadPaste(value) {
-  reset('粘贴内容');
+  reset(t('pastedContent'));
   decodedBytes = new TextEncoder().encode(value).byteLength;
-  if (decodedBytes > MAX_DECODED_BYTES) throw new Error('粘贴内容超过 256 MiB 上限');
+  if (decodedBytes > MAX_DECODED_BYTES) throw new Error(t('limitPaste'));
   consumeText(value);
   finish();
 }
@@ -211,6 +212,7 @@ async function handleMessage(data) {
 return { handleMessage };
 }
 if (typeof document === 'undefined') {
+  root.importScripts('i18n.js');
   const engine = createJsonlEngine(message => root.postMessage(message), () => root.importScripts('vendor/fzstd.js'));
   root.onmessage = ({ data }) => engine.handleMessage(data);
 } else {

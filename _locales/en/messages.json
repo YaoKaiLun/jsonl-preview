@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "JSONL Viewer"
+  },
+  "extDescription": {
+    "message": "Preview JSONL and JSONL.ZSTD locally with searchable records and a JSON tree."
+  },
+  "actionTitle": {
+    "message": "Open JSONL Viewer"
+  }
+}

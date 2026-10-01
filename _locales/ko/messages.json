@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "JSONL Viewer"
+  },
+  "extDescription": {
+    "message": "브라우저에서 JSONL 및 JSONL.ZSTD를 미리 보고 검색과 JSON 트리를 사용하세요."
+  },
+  "actionTitle": {
+    "message": "JSONL Viewer 열기"
+  }
+}

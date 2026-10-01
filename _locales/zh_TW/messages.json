@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "JSONL Viewer"
+  },
+  "extDescription": {
+    "message": "在瀏覽器本機預覽 JSONL 和 JSONL.ZSTD，搜尋記錄並查看 JSON 樹。"
+  },
+  "actionTitle": {
+    "message": "開啟 JSONL Viewer"
+  }
+}

@@ -8,9 +8,10 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
 FILES = [
     "manifest.json", "background.js", "viewer.html", "viewer.css", "viewer.js",
-    "worker.js", "vendor/fzstd.js", "vendor/fzstd.LICENSE",
+    "worker.js", "i18n.js", "vendor/fzstd.js", "vendor/fzstd.LICENSE",
     "icons/icon16.png", "icons/icon48.png", "icons/icon128.png", "LICENSE",
 ]
+FILES.extend(str(path.relative_to(ROOT)) for path in (ROOT / "_locales").glob("*/messages.json"))
 OUT = ROOT / "dist" / f"jsonl-preview-v{MANIFEST['version']}.zip"
 if "--check" in sys.argv:
     with ZipFile(OUT) as archive:

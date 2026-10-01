@@ -1,6 +1,6 @@
-# Privacy Policy for JSONL 预览器 (JSONL Previewer)
+# Privacy Policy for JSONL Viewer
 
-JSONL Previewer processes only JSONL content that you choose to paste, select, or drag into the extension. That content may contain personal or sensitive information depending on the file you provide. Parsing, zstd decompression, searching, and display happen locally in your browser. The developer does not receive your files, pasted content, search terms, or usage data.
+JSONL Viewer processes only JSONL content that you choose to paste, select, or drag into the extension. That content may contain personal or sensitive information depending on the file you provide. Parsing, zstd decompression, searching, and display happen locally in your browser. The developer does not receive your files, pasted content, search terms, or usage data.
 
 The content is held temporarily in the preview tab and its worker while the tab is open. The extension does not save it across sessions or sync it to an account. If you use a copy button, only the text you choose is written to your device clipboard. The extension does not read your browsing history, other webpages, or files you have not selected.
 

@@ -6,15 +6,26 @@ const root = path.join(__dirname, '..');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
 assert.equal(manifest.manifest_version, 3);
 assert.equal(manifest.background.service_worker, 'background.js');
+assert.equal(manifest.default_locale, 'en');
+assert.equal(manifest.name, '__MSG_extName__');
+assert.equal(manifest.description, '__MSG_extDescription__');
 assert.deepEqual(manifest.permissions || [], []);
 assert.deepEqual(manifest.host_permissions || [], []);
 assert.match(manifest.version, /^\d+\.\d+\.\d+$/);
 
 const runtimeFiles = [
   'manifest.json', 'background.js', 'viewer.html', 'viewer.css', 'viewer.js',
-  'worker.js', 'vendor/fzstd.js', 'vendor/fzstd.LICENSE',
+  'worker.js', 'i18n.js', 'vendor/fzstd.js', 'vendor/fzstd.LICENSE',
   'icons/icon16.png', 'icons/icon48.png', 'icons/icon128.png', 'LICENSE'
 ];
+const locales = ['en', 'zh_CN', 'zh_TW', 'ja', 'ko', 'es', 'fr', 'de', 'pt_BR'];
+for (const locale of locales) {
+  const file = `_locales/${locale}/messages.json`;
+  runtimeFiles.push(file);
+  const messages = JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
+  for (const key of ['extName', 'extDescription', 'actionTitle']) assert.ok(messages[key]?.message, `${file} missing ${key}`);
+  assert.equal(messages.extName.message, 'JSONL Viewer');
+}
 for (const file of runtimeFiles) assert.ok(fs.statSync(path.join(root, file)).isFile(), `Missing ${file}`);
 
 for (const [size, file] of Object.entries(manifest.icons)) {
@@ -23,7 +34,7 @@ for (const [size, file] of Object.entries(manifest.icons)) {
   assert.equal(data.readUInt32BE(16), Number(size), `${file} has wrong width`);
   assert.equal(data.readUInt32BE(20), Number(size), `${file} has wrong height`);
 }
-for (const file of ['viewer.html', 'viewer.js', 'worker.js', 'background.js']) {
+for (const file of ['viewer.html', 'viewer.js', 'worker.js', 'i18n.js', 'background.js']) {
   const source = fs.readFileSync(path.join(root, file), 'utf8');
   assert.ok(!/<script[^>]+src=["']https?:/i.test(source), `${file} loads remote script`);
 }

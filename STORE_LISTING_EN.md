@@ -1,6 +1,8 @@
 # Chrome Web Store form copy (English)
 
-This is copy for the current v0.1.0 package. Check each field against the actual dashboard form and extension before submission. The package currently has a Chinese display name and a Simplified Chinese interface; English text here does not change the installed UI.
+This is copy for the v0.2.0 package. Check each field against the actual dashboard form and extension before submission. The extension name is JSONL Viewer, and the interface follows the browser language in nine supported locales.
+
+Optional detailed descriptions for the other eight locales are in [STORE_LISTING_TRANSLATIONS.md](STORE_LISTING_TRANSLATIONS.md); Chrome Web Store descriptions must be entered separately for each locale in the dashboard.
 
 ## Store listing
 
@@ -22,7 +24,7 @@ Features:
 • Compare common fields across records and inspect malformed lines with their source line numbers.
 • Expand a JSON tree, copy JSON or field paths, and read long text in a dedicated view.
 
-The extension does not upload files or send search terms to the developer. No account or network connection is required. The current interface is in Simplified Chinese.
+The extension does not upload files or send search terms to the developer. No account or network connection is required. The interface is available in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, French, German, and Brazilian Portuguese.
 ```
 
 **Category:** Developer Tools (or the closest available category)
@@ -60,7 +62,7 @@ For data-type checkboxes, disclose any category that the dashboard considers app
 ## Test instructions (if requested)
 
 ```text
-Click the extension toolbar icon to open the preview page. Click “试用示例” (Try sample) to load built-in JSONL data, including one intentionally invalid line. The “逐行预览” tab shows records, “公共字段表” compares common fields, and “异常行” shows malformed lines. Click a record to inspect its JSON tree. No account or test credentials are needed.
+Click the extension toolbar icon to open the preview page. Click “Try sample” to load built-in JSONL data, including one intentionally invalid line. “Row preview” shows records, “Common fields” compares frequent fields, and “Invalid lines” shows malformed lines. Click a record to inspect its JSON tree. No account or test credentials are needed. Set Chrome's interface language to English to see these labels.
 ```
 
 Do not submit for review until the listing, privacy answers, and real screenshot are complete. Chrome's current [listing](https://developer.chrome.com/docs/webstore/cws-dashboard-listing/), [privacy](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy), and [user-data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) explain the form and disclosure requirements.
