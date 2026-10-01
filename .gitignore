@@ -1,4 +1,4 @@
 node_modules/
 dist/*
 !dist/*.zip
-store/screenshots/
+store/screenshots/jsonl-viewer-1280x800.png
