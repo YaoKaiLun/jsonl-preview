@@ -45,3 +45,24 @@ draw.text((60, 171), "JSONL  PREVIEW", font=font(21), fill="#446d9c")
 draw.rounded_rectangle((58, 207, 191, 213), radius=3, fill="#7ca8e8")
 draw.rounded_rectangle((202, 207, 372, 213), radius=3, fill="#b9cfec")
 promo.save(promo_dir / "promo-440x280.png")
+
+# A larger store mark that echoes the extension toolbar icon and the `{ }` brand.
+# Render at 4x before downsampling so the curves and line ends stay sharp.
+scale = 4
+store_icon = Image.new("RGBA", (128 * scale, 128 * scale), (0, 0, 0, 0))
+draw = ImageDraw.Draw(store_icon)
+draw.rounded_rectangle((8 * scale, 8 * scale, 120 * scale, 120 * scale), radius=28 * scale, fill="#2565dc")
+draw.rounded_rectangle((13 * scale, 13 * scale, 115 * scale, 115 * scale), radius=24 * scale, outline="#78aaff", width=2 * scale)
+
+def brace(points):
+    draw.line([(x * scale, y * scale) for x, y in points], fill="white", width=7 * scale, joint="curve")
+    radius = 3.5 * scale
+    for x, y in (points[0], points[-1]):
+        draw.ellipse(((x * scale - radius), (y * scale - radius), (x * scale + radius), (y * scale + radius)), fill="white")
+
+left = [(49, 33), (42, 33), (38, 39), (38, 53), (32, 64), (38, 75), (38, 89), (42, 95), (49, 95)]
+brace(left)
+brace([(128 - x, y) for x, y in left])
+for y, width in ((48, 27), (64, 20), (80, 27)):
+    draw.rounded_rectangle((54 * scale, (y - 3) * scale, (54 + width) * scale, (y + 3) * scale), radius=3 * scale, fill="#c4e9ff")
+store_icon.resize((128, 128), Image.Resampling.LANCZOS).save(promo_dir / "icon-128.png")
