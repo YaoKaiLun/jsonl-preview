@@ -1,0 +1,11 @@
+{
+  "name": "jsonl-preview",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "test": "node --test test/*.test.cjs",
+    "check:release": "node scripts/check-release.cjs",
+    "package:extension": "npm run check:release && node scripts/package-extension.cjs"
+  },
+  "devDependencies": { "fzstd": "^0.1.1" }
+}
