@@ -43,4 +43,4 @@
 
 ## 开源
 
-项目使用 [MIT License](LICENSE)；打包的 `fzstd` 保留其 [MIT 许可证](vendor/fzstd.LICENSE)。欢迎通过 [Issues](https://github.com/YaoKaiLun/jsonl-preview/issues) 报告可复现的问题，贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。请勿上传包含真实个人信息或密钥的 JSONL 样本。
+项目使用 [MIT License](LICENSE)；打包的 `fzstd` 保留其 [MIT 许可证](vendor/fzstd.LICENSE)。隐私说明有[中文版](PRIVACY.md)和[英文版](PRIVACY_EN.md)；英文商店填写稿见 [STORE_LISTING_EN.md](STORE_LISTING_EN.md)。欢迎通过 [Issues](https://github.com/YaoKaiLun/jsonl-preview/issues) 报告可复现的问题，贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。请勿上传包含真实个人信息或密钥的 JSONL 样本。

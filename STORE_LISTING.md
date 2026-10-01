@@ -28,7 +28,7 @@
 
 - 单一用途：本地预览和检索用户主动提供的 JSONL 数据。
 - 扩展声明权限：无；网站主机权限：无。
-- 数据收集：无。数据传输：无。广告、分析和远程代码：无。
+- 用户主动提供的 JSONL 内容在浏览器中临时处理；开发者不接收文件或搜索词，也不做跨会话存储。数据传输：无。广告、分析和远程代码：无。即使只在本地处理，也需按后台要求披露。
 - 隐私政策 URL：`https://github.com/YaoKaiLun/jsonl-preview/blob/main/PRIVACY.md`
 - 支持 URL：`https://github.com/YaoKaiLun/jsonl-preview/issues`
 - 项目主页：`https://github.com/YaoKaiLun/jsonl-preview`
